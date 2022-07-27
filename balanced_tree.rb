@@ -18,9 +18,9 @@ public
     pretty_print(node.left, "#{prefix}#{is_left ? '    ' : '│   '}", true) if node.left
   end
 
-  def contains?(val)
-    return true if root.value == val
-    return contains_helper(root,val) ? true : false
+  def contains?(seek)
+    return true if root.value == seek
+    return contains_helper(root,seek) ? true : false
   end
 
   def find(seek)
@@ -148,7 +148,38 @@ public
     return list
   end
 
-private
+  def height(node)
+    if node.left.nil? && node.right.nil?
+      return 0
+    else 
+      left = -1
+      right = -1
+      if !node.left.nil?
+        left = height(node.left)
+      end
+      if !node.right.nil?
+        right = height(node.right)
+      end
+      return left > right ? left + 1 : right + 1
+    end
+  end
+
+  def depth(node)
+    count = 0
+    current = @root
+    while(current != node)
+      if current.value > node.value
+        count += 1
+        current = current.left
+      elsif current.value < node.value
+        count += 1
+        current = current.right
+      end
+    end
+    count
+  end
+
+#private
   def build_tree(node,list)
     middle = list.length/2
     node.value = list[middle]
@@ -184,8 +215,8 @@ private
   end
   
   def leftmost_child(node)
-    #returns leftmost(lowest value) node under a parent
-    #using this for delete on nodes with two children
+    #returns leftmost node under a parent
+    #using this for #delete and #depth
     if node.left == nil
       return node
     else return leftmost_child(node.left)
@@ -225,9 +256,9 @@ private
     if node.value == seek
       return node
     elsif seek < node.value
-      return find(seek.node.left)
+      return find_helper(seek, node.left)
     else
-      return find(seek.node.right)
+      return find_helper(seek, node.right)
     end
   end
 end
@@ -247,6 +278,11 @@ my_tree = BalancedTree.new(set)
 my_tree.pretty_print
 puts "\n"
 
+my_tree.insert(11)
+my_tree.insert(12)
+my_tree.insert(13)
+my_tree.insert(40)
 
-my_tree.postorder { |x| puts x.value }
+my_tree.pretty_print
 
+puts my_tree.depth(my_tree.find(4))
