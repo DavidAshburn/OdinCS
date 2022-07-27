@@ -1,35 +1,3 @@
-=begin
-	
-sorted array -> list
-
-repeat until subarray size == 0
-	calc midpoint
-	if target == list[midpoint] stop
-
-	if target < list[midpoint]
-		search list[0...midpoint]
-	else
-		search list[midpoint..-1]
-=end
-
-
-def my_bin_search(list, target) #iterative
-	while list.length > 1
-		middle = list.length / 2
-		midval = list[middle]
-		return true if target == midval
-		list = list[0...middle] if midval > target
-		list = list[middle..-1] if midval < target
-	end
-	return list[0] == target ? true : false
-end
-
-
-list = [1,2,3,4,5,6,7,8,9]
-
-#(0..12).each { |i| p "#{i} is #{my_bin_search(list,i)} "}
-
-#Binary search trees
 
 class BinaryTree
   attr_accessor :root
@@ -54,7 +22,7 @@ class BinaryTree
   	bf_print_helper(queue)
   end
 
-  def bf_print_helper(queue) #level-order traversal
+  def bf_print_helper(queue) #level-order recursive traversal
   	p queue[0].value
   	if !queue[0].left.nil? 
   		queue.push(queue[0].left)
