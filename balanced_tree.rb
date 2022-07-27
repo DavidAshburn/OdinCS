@@ -1,30 +1,14 @@
 class BalancedTree
 
   attr_accessor :root
+
+public
   def initialize(list)
     @root = Node.new
     singles = []
     list.map { |v| singles.push(v) unless singles.include?(v) }
     singles.sort!
     build_tree(@root, singles)
-  end
-
-  def build_tree(node,list)
-    middle = list.length/2
-    node.value = list[middle]
-    if middle > 0
-      left_list = list[0...middle]
-      right_list = list[middle+1..-1]
-      node.left = Node.new
-      node.right = Node.new
-      build_tree(node.left,left_list)
-      build_tree(node.right,right_list)
-      node.left = nil if node.left.value == nil
-      node.right = nil if node.right.value == nil
-    else
-      return
-    end
-    return
   end
 
   def pretty_print(node = @root, prefix = '', is_left = true)
@@ -38,45 +22,13 @@ class BalancedTree
     return contains_helper(root,val) ? true : false
   end
 
-  def contains_helper(node, value) #depth-first recursive traversal ( Preorder )
-    return if node.nil?
-    return true if node.value == value
-    return true if contains_helper(node.left, value)
-    return true if contains_helper(node.right, value)
-  end
-
-  #returns [parent_node, matching_node]
-  #using this for delete operations
-  def targets(seek, node = @root) 
-    if node.left.value == seek
-      return [node, node.left]
-    end 
-    if node.right.value == seek
-      return [node, node.right]
-    end
-    if seek >= node.value 
-      return targets(seek, node.right)
-    else
-      return targets(seek, node.left)
+  def find(seek)
+    if contains?(seek)
+      return find_helper(seek)
+    else return nil
     end
   end
 
-  #returns leftmost(lowest value) node under a parent
-  #using this for delete on nodes with two children
-  def leftmost_child(node)
-    if node.left == nil
-      return node
-    else return leftmost_child(node.left)
-    end
-  end
-
-  #returns child of node with a single child
-  def only_child(node)
-    return node.left if node.left != nil
-    return node.right if node.right != nil
-  end
-
-  #targets returns [parent_node, matching_node]
   def delete(val)
     if(val == @root.value)
       #get parent to clear child leaf and child leaf to replace @root value
@@ -122,7 +74,64 @@ class BalancedTree
     end
   end
 
-  def insert_helper(value, node)
+private
+  def build_tree(node,list)
+    middle = list.length/2
+    node.value = list[middle]
+    if middle > 0
+      left_list = list[0...middle]
+      right_list = list[middle+1..-1]
+      node.left = Node.new
+      node.right = Node.new
+      build_tree(node.left,left_list)
+      build_tree(node.right,right_list)
+      node.left = nil if node.left.value == nil
+      node.right = nil if node.right.value == nil
+    else
+      return
+    end
+    return
+  end
+
+  def contains_helper(node, value) #depth-first recursive traversal ( Preorder )
+    return if node.nil?
+    return true if node.value == value
+    return true if contains_helper(node.left, value)
+    return true if contains_helper(node.right, value)
+  end
+
+  def targets(seek, node = @root) 
+    #returns [parent_node, matching_node]
+    #using this for delete operations
+    if node.left.value == seek
+      return [node, node.left]
+    end 
+    if node.right.value == seek
+      return [node, node.right]
+    end
+    if seek >= node.value 
+      return targets(seek, node.right)
+    else
+      return targets(seek, node.left)
+    end
+  end
+  
+  def leftmost_child(node)
+    #returns leftmost(lowest value) node under a parent
+    #using this for delete on nodes with two children
+    if node.left == nil
+      return node
+    else return leftmost_child(node.left)
+    end
+  end
+
+  def only_child(node)
+    #returns child of node with a single child
+    return node.left if node.left != nil
+    return node.right if node.right != nil
+  end
+
+ def insert_helper(value, node)
     if(value < node.value)
       if node.left == nil
         node.left = Node.new(value) 
@@ -135,6 +144,16 @@ class BalancedTree
       else
         insert_helper(value,node.right)
       end
+    end
+  end
+
+  def find_helper(seek, node = @root)
+    if node.value == seek
+      return node
+    elsif seek < node.value
+      return find(seek.node.left)
+    else
+      return find(seek.node.right)
     end
   end
 end
@@ -158,24 +177,6 @@ my_tree.delete(6)
 
 my_tree.pretty_print
 
-=begin
-two children branch = [
-  #<Node:0x000001a06376e670 
-      @left=#<Node:0x000001a06376d040 
-                @left=#<Node:0x000001a063767f78 
-                          @left=nil, @right=nil, @value=1>, 
-                @right=#<Node:0x000001a063767eb0 
-                          @left=nil, @right=nil, @value=nil>, 
-                @value=2>, 
-      @right=#<Node:0x000001a06376cf50 
-                  @left=nil, @right=nil, @value=4>, 
-      @value=3>, 
-  #<Node:0x000001a06376d040 
-      @left=#<Node:0x000001a063767f78 
-                @left=nil, @right=nil, @value=1>, 
-      @right=#<Node:0x000001a063767eb0 
-                @left=nil, @right=nil, @value=nil>, 
-      @value=2>
+found = my_tree.find(7)
 
-]
-=end
+p found
