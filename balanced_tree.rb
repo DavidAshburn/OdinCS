@@ -77,7 +77,7 @@ public
     end
   end
 
-  def level_order(no_block = [], queue = [@root], place = 0)
+  def level_order(queue = [@root])
     count = 1
     dex = 0
     while(count < @size)
@@ -101,6 +101,51 @@ public
       return
     end
     return queue.map { |val| val.value }
+  end
+
+  def inorder(node = @root, list = [], &block)
+    if !node.left.nil?
+      inorder(node.left, list)
+    end
+    if block_given?
+      block.call node
+    else
+      list.push(node.value)
+    end
+    if !node.right.nil?
+      inorder(node.right, list)
+    end
+    return list
+  end
+
+  def preorder(node = @root, list = [], &block)
+    if block_given?
+      block.call node
+    else
+      list.push(node.value)
+    end
+    if !node.left.nil?
+      preorder(node.left, list, &block)
+    end
+    if !node.right.nil?
+      preorder(node.right, list, &block)
+    end
+    return list
+  end
+
+  def postorder(node = @root, list = [], &block)
+    if !node.left.nil?
+      postorder(node.left, list, &block)
+    end
+    if !node.right.nil?
+      postorder(node.right, list, &block)
+    end
+    if block_given?
+      block.call node
+    else
+      list.push(node.value)
+    end
+    return list
   end
 
 private
@@ -202,7 +247,6 @@ my_tree = BalancedTree.new(set)
 my_tree.pretty_print
 puts "\n"
 
-my_tree.level_order do |x| 
-  puts x.value
-end
+
+my_tree.postorder { |x| puts x.value }
 
