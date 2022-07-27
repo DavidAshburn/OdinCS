@@ -8,6 +8,7 @@ public
     singles = []
     list.map { |v| singles.push(v) unless singles.include?(v) }
     singles.sort!
+    @size = singles.length
     build_tree(@root, singles)
   end
 
@@ -63,15 +64,43 @@ public
         branch[0].right = only_child(branch[1])
       end
     end
+    @size -= 1
   end
   
   def insert(value)
     if(!self.contains?(value))
       insert_helper(value, @root)
+      @size += 1
       return true
     else
       return false
     end
+  end
+
+  def level_order(no_block = [], queue = [@root], place = 0)
+    count = 1
+    dex = 0
+    while(count < @size)
+      if queue[dex].left != nil
+        queue.push(queue[dex].left)
+        count += 1
+      end
+      if queue[dex].right != nil
+        queue.push(queue[dex].right)
+        count += 1
+      end
+      dex += 1
+    end
+
+    if block_given? 
+      i = 0
+      while i < queue.length
+        yield(queue[i])
+        i += 1
+      end
+      return
+    end
+    return queue.map { |val| val.value }
   end
 
 private
@@ -91,13 +120,6 @@ private
       return
     end
     return
-  end
-
-  def contains_helper(node, value) #depth-first recursive traversal ( Preorder )
-    return if node.nil?
-    return true if node.value == value
-    return true if contains_helper(node.left, value)
-    return true if contains_helper(node.right, value)
   end
 
   def targets(seek, node = @root) 
@@ -131,7 +153,14 @@ private
     return node.right if node.right != nil
   end
 
- def insert_helper(value, node)
+  def contains_helper(node, value) #depth-first recursive traversal ( Preorder )
+    return if node.nil?
+    return true if node.value == value
+    return true if contains_helper(node.left, value)
+    return true if contains_helper(node.right, value)
+  end
+
+  def insert_helper(value, node)
     if(value < node.value)
       if node.left == nil
         node.left = Node.new(value) 
@@ -173,10 +202,7 @@ my_tree = BalancedTree.new(set)
 my_tree.pretty_print
 puts "\n"
 
-my_tree.delete(6)
+my_tree.level_order do |x| 
+  puts x.value
+end
 
-my_tree.pretty_print
-
-found = my_tree.find(7)
-
-p found
