@@ -179,6 +179,21 @@ public
     count
   end
 
+  def balanced?
+    if (height(@root.left) - height(@root.right)).abs > 1
+      return false
+    end
+    return true
+  end
+
+  def rebalance
+    new_list = inorder
+    @root = Node.new
+    new_list.sort!
+    @size = new_list.length
+    build_tree(@root, new_list)
+  end
+
 #private
   def build_tree(node,list)
     middle = list.length/2
@@ -272,17 +287,49 @@ class Node
   end
 end
 
-set = [1,2,6,4,3,7,8,9,10,3,2,6]
+rand_list = Array.new(15) { rand(1..100) }
 
-my_tree = BalancedTree.new(set)
-my_tree.pretty_print
+rand_tree = BalancedTree.new(rand_list)
+
+rand_tree.pretty_print
+
+puts "Level Order\n"
+puts rand_tree.level_order
+puts "\n"
+puts "PreOrder\n"
+puts rand_tree.preorder
+puts "\n"
+puts "PostOrder\n"
+puts rand_tree.postorder
+puts "\n"
+puts "InOrder\n"
+puts rand_tree.inorder
 puts "\n"
 
-my_tree.insert(11)
-my_tree.insert(12)
-my_tree.insert(13)
-my_tree.insert(40)
+rand_tree.insert(105)
+rand_tree.insert(250)
+rand_tree.insert(134)
+rand_tree.insert(165)
+rand_tree.insert(785)
 
-my_tree.pretty_print
+puts "Balanced? #{rand_tree.balanced?}\n"
 
-puts my_tree.depth(my_tree.find(4))
+rand_tree.rebalance
+puts "Rebalancing..."
+
+puts "Balanced? #{rand_tree.balanced?}\n"
+
+rand_tree.pretty_print
+
+puts "Level Order\n"
+puts rand_tree.level_order
+puts "\n"
+puts "PreOrder\n"
+puts rand_tree.preorder
+puts "\n"
+puts "PostOrder\n"
+puts rand_tree.postorder
+puts "\n"
+puts "InOrder\n"
+puts rand_tree.inorder
+puts "\n"
