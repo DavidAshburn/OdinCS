@@ -1,0 +1,11 @@
+
+When we initialize the Travails object, it accepts a starting node and populates a tree with all possible, 
+valid move-orders starting there. Squares may only be visited once, we generate Nodes in level order so that we will
+always find the shortest path without really looking for it. We stop processing our queue when the @board array shows all 
+squares have been visited.
+
+We initialize nodes with a routes array, as we create valid children for a node, we add the parent node to it's own
+route list and pin that to every child. The @root is the only node with an empty route list since we started there.
+
+When we want to find the shortest route, we just find the node that matches that coordinate and the shortest route is already stored.
+
