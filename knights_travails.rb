@@ -28,7 +28,7 @@ class Travails
 		return valids
 	end
 
-	def one_from_queue
+	def one_from_queue #populates children and routes of one queue item, build tree controls loop condition
 		new_moves = knight_moves(@queue[0].x_coord, @queue[0].y_coord)
 		init_nodes = []
 		new_moves.each do |x|
@@ -45,7 +45,7 @@ class Travails
 		@queue.shift
 	end
 
-	def get_route(list)
+	def get_route(list) #run through all nodes in level order until one matches target, return the stored route made on initialization
 		line = [@root]
 		
 		while line.length > 0
@@ -60,7 +60,7 @@ class Travails
 		return "oops"
 	end
 
-	def build_tree
+	def build_tree #loop control for one_from_queue
 		while @board.flatten.all? == false
 			one_from_queue
 		end
@@ -77,7 +77,7 @@ class Travails
 		return [x,y]
 	end
 
-	def input_square(string)
+	def input_square(string) #controller
 		pair = chess_to_coord(string)
 		output = get_route(pair)
 		output.each do |x|
